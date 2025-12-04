@@ -1,0 +1,119 @@
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+  allow-parallel-runners: true
+formatters:
+  enable:
+    - goimports
+    - gofumpt
+
+
+linters:
+  default: none
+  enable:
+    - govet
+    - staticcheck
+    - unused
+    - revive
+    - goconst
+    - misspell
+
+    - gocritic
+    - gocyclo
+    - dogsled
+    - nakedret
+
+    - errorlint
+    - errcheck
+
+    - gosec
+    - bodyclose
+    - noctx
+    - rowserrcheck
+    - sqlclosecheck
+    - prealloc
+
+  settings:
+    errorlint:
+      errorf: true
+      asserts: true
+      comparison: true
+
+    gocyclo:
+      min-complexity: 20
+
+    funlen:
+      lines: 100
+      statements: 50
+
+
+    goconst:
+      min-len: 3
+      min-occurrences: 3
+
+
+    revive:
+      rules:
+        - name: exported
+          disabled: false
+          arguments:
+            - "checkPrivateReceivers"
+            - "sayRepetitiveInsteadOfStutters"
+        - name: package-comments
+          disabled: false
+        - name: unexported-return
+          disabled: true
+        - name: indent-error-flow
+          disabled: false
+
+    staticcheck:
+      checks: [ "all" ]
+
+
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - experimental
+        - opinionated
+        - performance
+        - style
+      disabled-checks:
+        - ifElseChain
+        - octalLiteral
+        - whyNoLint
+
+
+    gosec:
+      excludes:
+        - G101
+        - G404
+
+  exclusions:
+    paths:
+      - vendor
+      - test/testdata
+    rules:
+      - path: _test\.go
+        linters:
+          - gocyclo
+          - errcheck
+          - dupl
+          - gosec
+          - funlen
+          - goconst
+
+      - text: "Use of weak random number generator"
+        linters:
+          - gosec
+      - text: "defer (Close|Right) error is not checked"
+        linters:
+          - errcheck
+
+      - text: "net/http.Request without context.Context"
+        linters:
+          - noctx
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
